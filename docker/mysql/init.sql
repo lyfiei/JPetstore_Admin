@@ -13,30 +13,30 @@ USE jpetstore;
 -- 建表语句
 -- ==========================================
 
-DROP TABLE IF EXISTS `LINEITEM`;
-DROP TABLE IF EXISTS `ORDERSTATUS`;
-DROP TABLE IF EXISTS `ORDERS`;
-DROP TABLE IF EXISTS `CART`;
-DROP TABLE IF EXISTS `INVENTORY`;
-DROP TABLE IF EXISTS `ITEM`;
-DROP TABLE IF EXISTS `PRODUCT`;
-DROP TABLE IF EXISTS `BANNERDATA`;
-DROP TABLE IF EXISTS `PROFILE`;
-DROP TABLE IF EXISTS `SIGNON`;
-DROP TABLE IF EXISTS `ADDRESS`;
-DROP TABLE IF EXISTS `ACCOUNT`;
-DROP TABLE IF EXISTS `SUPPLIER`;
-DROP TABLE IF EXISTS `CATEGORY`;
-DROP TABLE IF EXISTS `SEQUENCE`;
+DROP TABLE IF EXISTS `lineitem`;
+DROP TABLE IF EXISTS `orderstatus`;
+DROP TABLE IF EXISTS `orders`;
+DROP TABLE IF EXISTS `cart`;
+DROP TABLE IF EXISTS `inventory`;
+DROP TABLE IF EXISTS `item`;
+DROP TABLE IF EXISTS `product`;
+DROP TABLE IF EXISTS `bannerdata`;
+DROP TABLE IF EXISTS `profile`;
+DROP TABLE IF EXISTS `signon`;
+DROP TABLE IF EXISTS `address`;
+DROP TABLE IF EXISTS `account`;
+DROP TABLE IF EXISTS `supplier`;
+DROP TABLE IF EXISTS `category`;
+DROP TABLE IF EXISTS `sequence`;
 
-CREATE TABLE `CATEGORY` (
+CREATE TABLE `category` (
   `catid` varchar(10) NOT NULL,
   `name` varchar(80) DEFAULT NULL,
   `descn` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`catid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `SUPPLIER` (
+CREATE TABLE `supplier` (
   `suppid` int NOT NULL,
   `name` varchar(80) DEFAULT NULL,
   `status` varchar(2) NOT NULL,
@@ -49,23 +49,23 @@ CREATE TABLE `SUPPLIER` (
   PRIMARY KEY (`suppid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `PRODUCT` (
+CREATE TABLE `product` (
   `productid` varchar(10) NOT NULL,
-  `CATEGORY` varchar(10) NOT NULL,
+  `category` varchar(10) NOT NULL,
   `name` varchar(80) DEFAULT NULL,
   `descn` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`productid`),
-  KEY `productCat` (`CATEGORY`),
+  KEY `productCat` (`category`),
   KEY `productName` (`name`),
-  CONSTRAINT `fk_product_1` FOREIGN KEY (`CATEGORY`) REFERENCES `CATEGORY` (`catid`)
+  CONSTRAINT `fk_product_1` FOREIGN KEY (`category`) REFERENCES `category` (`catid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `ITEM` (
+CREATE TABLE `item` (
   `itemid` varchar(10) NOT NULL,
   `productid` varchar(10) NOT NULL,
   `listprice` decimal(10,2) DEFAULT NULL,
   `unitcost` decimal(10,2) DEFAULT NULL,
-  `SUPPLIER` int DEFAULT NULL,
+  `supplier` int DEFAULT NULL,
   `status` varchar(2) DEFAULT NULL,
   `attr1` varchar(80) DEFAULT NULL,
   `attr2` varchar(80) DEFAULT NULL,
@@ -73,19 +73,19 @@ CREATE TABLE `ITEM` (
   `attr4` varchar(80) DEFAULT NULL,
   `attr5` varchar(80) DEFAULT NULL,
   PRIMARY KEY (`itemid`),
-  KEY `fk_item_2` (`SUPPLIER`),
+  KEY `fk_item_2` (`supplier`),
   KEY `itemProd` (`productid`),
-  CONSTRAINT `fk_item_1` FOREIGN KEY (`productid`) REFERENCES `PRODUCT` (`productid`),
-  CONSTRAINT `fk_item_2` FOREIGN KEY (`SUPPLIER`) REFERENCES `SUPPLIER` (`suppid`)
+  CONSTRAINT `fk_item_1` FOREIGN KEY (`productid`) REFERENCES `product` (`productid`),
+  CONSTRAINT `fk_item_2` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`suppid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `INVENTORY` (
+CREATE TABLE `inventory` (
   `itemid` varchar(10) NOT NULL,
   `qty` int NOT NULL,
   PRIMARY KEY (`itemid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `ACCOUNT` (
+CREATE TABLE `account` (
   `userid` varchar(80) NOT NULL,
   `email` varchar(80) NOT NULL,
   `firstname` varchar(80) NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE `ACCOUNT` (
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `ADDRESS` (
+CREATE TABLE `address` (
   `address_id` int NOT NULL AUTO_INCREMENT,
   `user_id` varchar(80) NOT NULL,
   `first_name` varchar(80) NOT NULL,
@@ -117,13 +117,13 @@ CREATE TABLE `ADDRESS` (
   PRIMARY KEY (`address_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `SIGNON` (
+CREATE TABLE `signon` (
   `username` varchar(25) NOT NULL,
   `password` varchar(25) NOT NULL,
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `PROFILE` (
+CREATE TABLE `profile` (
   `userid` varchar(80) NOT NULL,
   `langpref` varchar(80) NOT NULL,
   `favcategory` varchar(30) DEFAULT NULL,
@@ -132,13 +132,13 @@ CREATE TABLE `PROFILE` (
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `BANNERDATA` (
+CREATE TABLE `bannerdata` (
   `favcategory` varchar(80) NOT NULL,
   `bannername` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`favcategory`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `CART` (
+CREATE TABLE `cart` (
   `user_id` varchar(80) NOT NULL,
   `item_id` varchar(10) NOT NULL,
   `product_id` varchar(10) NOT NULL,
@@ -149,7 +149,7 @@ CREATE TABLE `CART` (
   PRIMARY KEY (`user_id`,`item_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `ORDERS` (
+CREATE TABLE `orders` (
   `orderid` int NOT NULL,
   `userid` varchar(80) NOT NULL,
   `orderdate` date NOT NULL,
@@ -179,7 +179,7 @@ CREATE TABLE `ORDERS` (
   PRIMARY KEY (`orderid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `ORDERSTATUS` (
+CREATE TABLE `orderstatus` (
   `orderid` int NOT NULL,
   `linenum` int NOT NULL,
   `timestamp` date NOT NULL,
@@ -187,7 +187,7 @@ CREATE TABLE `ORDERSTATUS` (
   PRIMARY KEY (`orderid`,`linenum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `LINEITEM` (
+CREATE TABLE `lineitem` (
   `orderid` int NOT NULL,
   `linenum` int NOT NULL,
   `itemid` varchar(10) NOT NULL,
@@ -196,7 +196,7 @@ CREATE TABLE `LINEITEM` (
   PRIMARY KEY (`orderid`,`linenum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `SEQUENCE` (
+CREATE TABLE `sequence` (
   `name` varchar(30) NOT NULL,
   `nextid` int NOT NULL,
   PRIMARY KEY (`name`)
@@ -206,18 +206,18 @@ CREATE TABLE `SEQUENCE` (
 -- 初始数据
 -- ==========================================
 
-INSERT INTO `CATEGORY` VALUES
+INSERT INTO `category` VALUES
 ('BIRDS','Birds','<image src=\"../images/birds_icon.gif\"><font size=\"5\" color=\"blue\"> Birds</font>'),
 ('CATS','Cats','<image src=\"../images/cats_icon.gif\"><font size=\"5\" color=\"blue\"> Cats</font>'),
 ('DOGS','Dogs','<image src=\"../images/dogs_icon.gif\"><font size=\"5\" color=\"blue\"> Dogs</font>'),
 ('FISH','Fish','<image src=\"../images/fish_icon.gif\"><font size=\"5\" color=\"blue\"> Fish</font>'),
 ('REPTILES','Reptiles','<image src=\"../images/reptiles_icon.gif\"><font size=\"5\" color=\"blue\"> Reptiles</font>');
 
-INSERT INTO `SUPPLIER` VALUES
+INSERT INTO `supplier` VALUES
 (1,'XYZ Pets','AC','600 Avon Way','','Los Angeles','CA','94024','212-947-0797'),
 (2,'ABC Pets','AC','700 Abalone Way','','San Francisco ','CA','94024','415-947-0797');
 
-INSERT INTO `PRODUCT` VALUES
+INSERT INTO `product` VALUES
 ('AV-CB-01','BIRDS','Amazon Parrot','<image src=\"../images/bird2.gif\">Great companion for up to 75 years'),
 ('AV-SB-02','BIRDS','Finch','<image src=\"../images/bird1.gif\">Great stress reliever'),
 ('FI-FW-01','FISH','Koi','<image src=\"../images/fish3.gif\">Fresh Water fish from Japan'),
@@ -235,7 +235,7 @@ INSERT INTO `PRODUCT` VALUES
 ('RP-LI-02','REPTILES','Iguana','<image src=\"../images/lizard1.gif\">Friendly green friend'),
 ('RP-SN-01','REPTILES','Rattlesnake','<image src=\"../images/snake1.gif\">Doubles as a watch dog');
 
-INSERT INTO `ITEM` VALUES
+INSERT INTO `item` VALUES
 ('EST-1','FI-SW-01',16.50,10.00,1,'P','Large',NULL,NULL,NULL,NULL),
 ('EST-10','K9-DL-01',18.50,12.00,1,'P','Spotted Adult Female',NULL,NULL,NULL,NULL),
 ('EST-11','RP-SN-01',18.50,12.00,1,'P','Venomless',NULL,NULL,NULL,NULL),
@@ -265,7 +265,7 @@ INSERT INTO `ITEM` VALUES
 ('EST-8','K9-PO-02',18.50,12.00,1,'P','Male Puppy',NULL,NULL,NULL,NULL),
 ('EST-9','K9-DL-01',18.50,12.00,1,'P','Spotless Male Puppy',NULL,NULL,NULL,NULL);
 
-INSERT INTO `INVENTORY` VALUES
+INSERT INTO `inventory` VALUES
 ('EST-1',10000),('EST-10',10000),('EST-11',10000),('EST-12',10000),
 ('EST-13',10000),('EST-14',10000),('EST-15',10000),('EST-16',9997),
 ('EST-17',10000),('EST-18',10000),('EST-19',10000),('EST-2',10000),
@@ -274,43 +274,43 @@ INSERT INTO `INVENTORY` VALUES
 ('EST-28',10000),('EST-3',10000),('EST-4',10000),('EST-5',10000),
 ('EST-6',10000),('EST-7',10000),('EST-8',10000),('EST-9',10000);
 
-INSERT INTO `ACCOUNT` VALUES
+INSERT INTO `account` VALUES
 ('ACID','acid@yourdomain.com','ABC','XYX','OK','901 San Antonio Road','MS UCUP02-206','Palo Alto','CA','94303','USA','555-555-5555'),
 ('j2ee','yourname@yourdomain.com','ABC','XYX','OK','901 San Antonio Road','MS UCUP02-206','Palo Alto','CA','94303','USA','555-555-5555'),
 ('lyf','2350254763@qq.com','李','悦菲','OK','中南大学岳麓山校区本部二舍','www','changsha','www','410083','中国香港特别行政区','18773248033'),
 ('testuser555','test555@test.com','Test','User','OK','123 Main St','','NYC','NY','10001','USA','13800138000');
 
-INSERT INTO `ADDRESS` VALUES
+INSERT INTO `address` VALUES
 (1,'lyf','李','悦菲','18773248033','中南大学岳麓山校区本部二舍','www','changsha','www','410083','中国香港特别行政区',1);
 
-INSERT INTO `SIGNON` VALUES
+INSERT INTO `signon` VALUES
 ('ACID','ACID'),('j2ee','j2ee'),('lyf','123456'),('testuser555','Test123456');
 
-INSERT INTO `PROFILE` VALUES
+INSERT INTO `profile` VALUES
 ('ACID','english','CATS',1,1),
 ('j2ee','english','DOGS',1,1),
 ('lyf','zh_CN','FISH',1,1),
 ('testuser555','zh_CN','FISH',1,1);
 
-INSERT INTO `BANNERDATA` VALUES
+INSERT INTO `bannerdata` VALUES
 ('BIRDS','<image src=\"../images/banner_birds.gif\">'),
 ('CATS','<image src=\"../images/banner_cats.gif\">'),
 ('DOGS','<image src=\"../images/banner_dogs.gif\">'),
 ('FISH','<image src=\"../images/banner_fish.gif\">'),
 ('REPTILES','<image src=\"../images/banner_reptiles.gif\">');
 
-INSERT INTO `CART` VALUES
+INSERT INTO `cart` VALUES
 ('lyf','EST-4','FI-FW-01','<image src=\"../images/fish3.gif\">Fresh Water fish from Japan',1,1,18.50),
 ('testuser555','EST-1','FI-SW-01','<image src=\"../images/fish1.gif\">Salt Water fish from Australia',1,1,16.50);
 
-INSERT INTO `ORDERS` VALUES
+INSERT INTO `orders` VALUES
 (1000,'lyf','2026-05-28','中南大学岳麓山校区本部二舍','www','changsha','www','410083','中国香港特别行政区','中南大学岳麓山校区本部二舍','www','changsha','www','410083','中国香港特别行政区','UPS',187.00,'李','悦菲','李','悦菲','1234567890123456','02/2222','Visa','CN','P'),
 (1001,'lyf','2026-05-28','中南大学岳麓山校区本部二舍','www','changsha','www','410083','中国香港特别行政区','中南大学岳麓山校区本部二舍','www','changsha','www','410083','中国香港特别行政区','FedEx',93.50,'李','悦菲','李','悦菲','1234567890123456','09/2222','Visa','CN','P');
 
-INSERT INTO `ORDERSTATUS` VALUES
+INSERT INTO `orderstatus` VALUES
 (1000,0,'2026-05-28','P'),(1001,0,'2026-05-28','P');
 
-INSERT INTO `LINEITEM` VALUES
+INSERT INTO `lineitem` VALUES
 (1000,1,'EST-16',2,93.50),(1001,1,'EST-16',1,93.50);
 
-INSERT INTO `SEQUENCE` VALUES ('ordernum',1002);
+INSERT INTO `sequence` VALUES ('ordernum',1002);
