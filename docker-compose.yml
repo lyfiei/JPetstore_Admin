@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+  # ==========================================
+  # MySQL 8.0 数据库服务
+  # ==========================================
+  mysql:
+    image: mysql:8.0
+    container_name: jpetstore-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root123}
+      MYSQL_DATABASE: jpetstore
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+      TZ: Asia/Shanghai
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      # 数据持久化
+      - mysql-data:/var/lib/mysql
+      # 初始化 SQL 脚本（首次启动时自动执行）
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-root123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - jpetstore-network
+
+  # ==========================================
+  # JPetStore Admin 管理后台（Spring Boot + Thymeleaf）
+  # 镜像构建：docker build -t petstore-admin:latest .
+  # ==========================================
+  petstore-admin:
+    image: petstore-admin:latest
+    container_name: petstore-admin
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # 数据库连接配置
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: jpetstore
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-root123}
+      # JVM 参数
+      JAVA_OPTS: "-Xms256m -Xmx512m -XX:+UseG1GC"
+      TZ: Asia/Shanghai
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    networks:
+      - jpetstore-network
+
+# ==========================================
+# 数据卷
+# ==========================================
+volumes:
+  mysql-data:
+    name: jpetstore-mysql-data
+
+# ==========================================
+# 网络
+# ==========================================
+networks:
+  jpetstore-network:
+    name: jpetstore-network
+    driver: bridge

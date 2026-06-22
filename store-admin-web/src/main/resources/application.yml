@@ -7,12 +7,12 @@ spring:
   application:
     name: store-admin
   
-  # 数据源配置
+  # 数据源配置（支持环境变量覆盖）
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/jpetstore?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: lyfSQL13579
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:jpetstore}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:lyfSQL13579}
   
   # Thymeleaf 配置
   thymeleaf:
