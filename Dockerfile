@@ -29,13 +29,15 @@ RUN mvn clean package -DskipTests -B -q
 # ==========================================
 # 运行阶段：JRE 运行环境
 # ==========================================
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre
 
 # 设置时区
-RUN apk add --no-cache tzdata curl && \
-    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tzdata curl && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone && \
-    apk del tzdata
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -43,8 +45,8 @@ WORKDIR /app
 COPY --from=build /app/store-admin-web/target/*.jar app.jar
 
 # 创建非 root 用户运行应用
-RUN addgroup -g 1000 appgroup && \
-    adduser -u 1000 -G appgroup -D appuser && \
+RUN groupadd -g 1000 appgroup && \
+    useradd -u 1000 -g appgroup -m -s /bin/bash appuser && \
     chown -R appuser:appgroup /app
 
 USER appuser
